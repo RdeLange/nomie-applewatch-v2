@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { sync, load, changeSelection, addTrackables, removeItem, saveSelection, saveAndSync, saveSettings, launchSync } from './sync.svelte';
   import { SELECTION_CHOICES } from './storage';
-  import { paletteFrom, type Palette } from './palette';
+  import { paletteFrom, glassFrom, type Palette, type Glass } from './palette';
   import { offerTracker } from './tracker-offer';
   import { onPrefsChange } from './prefs-live';
 
@@ -11,11 +11,13 @@
 
   let view = $state<'main' | 'settings' | 'info'>('main');
   let palette = $state<Palette>(paletteFrom(undefined));
+  let glass = $state<Glass>(glassFrom(undefined));
   let scale = $state(1);
 
   const applyNomieValues = (plugin: any) => {
     if (!plugin?.prefs) return;
     palette = paletteFrom(plugin.prefs);
+    glass = glassFrom(plugin.prefs);
     scale = plugin.prefs.fontScale || 1;
   };
 
@@ -49,7 +51,7 @@
 
 </script>
 
-<div class="card" style="--page: {palette.page}; --card: {palette.card}; --text: {palette.text}; --muted: {palette.textSecondary}; --line: {palette.separator}; --fill: {palette.fill}; --tint: {palette.tint}; --on-tint: {palette.onTint}; --tint-soft: {palette.tintSoft}; --good: {palette.good}; --scale: {scale};">
+<div class="card" style="--page: {palette.page}; --card: {palette.card}; --text: {palette.text}; --muted: {palette.textSecondary}; --line: {palette.separator}; --fill: {palette.fill}; --tint: {palette.tint}; --on-tint: {palette.onTint}; --tint-soft: {palette.tintSoft}; --good: {palette.good}; --glass-fill: {glass.fill}; --glass-edge: {glass.edge}; --glass-blur: {glass.blur}; --glass-shadow: {glass.shadow}; --scale: {scale};">
   <header class="top">
     <h1>⌚️ Apple Watch</h1>
     <nav class="tabs">
@@ -135,7 +137,11 @@
 
 <style>
   .card { box-sizing: border-box; min-height: 100vh; padding: 16px; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; background: var(--page); color: var(--text); font-size: calc(16px * var(--scale)); line-height: 1.4; }
-  .top { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+  /* the plugin page fills the frame, so the glass bar sits at the top edge */
+  /* the app's text: its iOS font stack (main.css --ios-font), with the app's smoothing */
+  :global(body) { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; -webkit-font-smoothing: antialiased; --ios-font-rounded: ui-rounded, -apple-system, system-ui, sans-serif; }
+  /* the header is a Liquid Glass bar (D-glass): the title and the tabs stay at the top, and the content scrolls under them */
+  .top { position: sticky; top: 0; z-index: 2; display: flex; flex-direction: column; gap: 10px; margin: -16px -16px 12px; padding: 16px 16px 10px; background: var(--glass-fill); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); border-bottom: 1px solid var(--glass-edge); }
   h1 { margin: 0; font-size: calc(26px * var(--scale)); font-weight: 700; }
   .tabs { display: flex; gap: 6px; }
   .tabs button, .segments button, .small { padding: 8px 12px; border: 0; border-radius: 10px; background: var(--fill); color: var(--text); font: inherit; cursor: pointer; }
