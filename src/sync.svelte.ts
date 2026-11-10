@@ -1,3 +1,4 @@
+import { t } from './i18n/index.svelte';
 // The state and the actions of the Apple Watch plugin. The screen only shows them.
 import { syncApiKey, syncTrackables, type FetchFn } from './protocol';
 import { connectionFrom, discoveryDays, readSettings, type Settings } from './storage';
@@ -40,7 +41,7 @@ export const saveSettings = async () => {
     sync.plugin.storage.setItem('awapikey', s.awApiKey),
     sync.plugin.storage.setItem('synconstart', s.syncOnStart),
   ]);
-  sync.message = 'Settings saved.';
+  sync.message = t('settingsSaved');
 };
 
 export const load = async (plugin: Plugin) => {
@@ -105,7 +106,7 @@ export const saveSelection = async () => {
   await save();
   await recomputeDiscovery();
   await refreshLists();
-  sync.message = 'Saved.';
+  sync.message = t('saved');
 };
 
 // Sends the Nomie key to the Apple Watch API server, then the list of trackables, as v1 did
@@ -114,9 +115,9 @@ export const saveAndSync = async (fetchFn?: FetchFn) => {
   try {
     await save();
     await pushToWatch(fetchFn);
-    sync.message = 'Saved & synced.';
+    sync.message = t('savedSynced');
   } catch (error) {
-    sync.message = `The Apple Watch API server could not be reached. ${(error as Error).message}`;
+    sync.message = t('serverUnreachable', { error: (error as Error).message });
   } finally {
     sync.busy = false;
   }

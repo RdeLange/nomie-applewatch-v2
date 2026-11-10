@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { t, setLanguage } from './i18n/index.svelte';
   import { onMount } from 'svelte';
   import { sync, load, changeSelection, addTrackables, removeItem, saveSelection, saveAndSync, saveSettings, launchSync } from './sync.svelte';
   import { SELECTION_CHOICES } from './storage';
@@ -17,6 +18,7 @@
   const applyNomieValues = (plugin: any) => {
     if (!plugin?.prefs) return;
     palette = paletteFrom(plugin.prefs);
+    setLanguage(plugin.prefs?.language);
     glass = glassFrom(plugin.prefs);
     scale = plugin.prefs.fontScale || 1;
   };
@@ -55,9 +57,9 @@
   <header class="top">
     <h1>⌚️ Apple Watch</h1>
     <nav class="tabs">
-      <button class:on={view === 'main'} onclick={() => (view = 'main')}>Trackables</button>
-      <button class:on={view === 'settings'} onclick={() => (view = 'settings')}>Settings</button>
-      <button class:on={view === 'info'} onclick={() => (view = 'info')}>Info</button>
+      <button class:on={view === 'main'} onclick={() => (view = 'main')}>{t('tabTrackables')}</button>
+      <button class:on={view === 'settings'} onclick={() => (view = 'settings')}>{t('tabSettings')}</button>
+      <button class:on={view === 'info'} onclick={() => (view = 'info')}>{t('tabInfo')}</button>
     </nav>
   </header>
 
@@ -65,7 +67,7 @@
 
   {#if view === 'main'}
     <section class="panel">
-      <p class="label">Discovered trackables</p>
+      <p class="label">{t('discovered')}</p>
       <div class="segments">
         {#each SELECTION_CHOICES as choice (choice.value)}
           <button class:on={sync.selection === choice.value} onclick={() => changeSelection(choice.value)}>{choice.text}</button>
@@ -75,62 +77,62 @@
         {#each sync.discovered as item (item.tag)}
           <li>{item.emoji} {item.name}</li>
         {:else}
-          <li class="muted">Nothing found in this period.</li>
+          <li class="muted">{t('nothingFound')}</li>
         {/each}
       </ul>
     </section>
 
     <section class="panel">
-      <div class="head"><p class="label">Always sync</p>
+      <div class="head"><p class="label">{t('alwaysSync')}</p>
         <span class="actions">
-          <button class="small" onclick={() => addTrackables('tracker', false)}>+ Trackable</button>
-          <button class="small" onclick={() => addTrackables('person', false)}>+ Person</button>
+          <button class="small" onclick={() => addTrackables('tracker', false)}>{t('addTrackable')}</button>
+          <button class="small" onclick={() => addTrackables('person', false)}>{t('addPerson')}</button>
         </span>
       </div>
       <ul class="rows">
         {#each sync.custom as item (item.id)}
-          <li><span>{item.emoji} {item.name}</span><button class="x" aria-label="Remove {item.name}" onclick={() => removeItem(item.id, false)}>×</button></li>
+          <li><span>{item.emoji} {item.name}</span><button class="x" aria-label={t('removeName', { name: item.name })} onclick={() => removeItem(item.id, false)}>×</button></li>
         {:else}
-          <li class="muted">Add the trackables you want on your watch.</li>
+          <li class="muted">{t('addHint')}</li>
         {/each}
       </ul>
     </section>
 
     <section class="panel">
-      <div class="head"><p class="label">Never sync</p>
+      <div class="head"><p class="label">{t('neverSync')}</p>
         <span class="actions">
-          <button class="small" onclick={() => addTrackables('tracker', true)}>+ Trackable</button>
-          <button class="small" onclick={() => addTrackables('person', true)}>+ Person</button>
+          <button class="small" onclick={() => addTrackables('tracker', true)}>{t('addTrackable')}</button>
+          <button class="small" onclick={() => addTrackables('person', true)}>{t('addPerson')}</button>
         </span>
       </div>
       <ul class="rows">
         {#each sync.blacklist as item (item.id)}
-          <li><span>{item.emoji} {item.name}</span><button class="x" aria-label="Remove {item.name}" onclick={() => removeItem(item.id, true)}>×</button></li>
+          <li><span>{item.emoji} {item.name}</span><button class="x" aria-label={t('removeName', { name: item.name })} onclick={() => removeItem(item.id, true)}>×</button></li>
         {:else}
-          <li class="muted">Nothing blacklisted.</li>
+          <li class="muted">{t('nothingBlacklisted')}</li>
         {/each}
       </ul>
     </section>
 
     <div class="buttons">
-      <button class="ghost" onclick={saveSelection} disabled={sync.busy}>Save</button>
-      <button class="primary" onclick={() => saveAndSync()} disabled={sync.busy}>{sync.busy ? 'Syncing…' : 'Save & sync'}</button>
+      <button class="ghost" onclick={saveSelection} disabled={sync.busy}>{t('save')}</button>
+      <button class="primary" onclick={() => saveAndSync()} disabled={sync.busy}>{sync.busy ? t('syncing') : t('saveSync')}</button>
     </div>
   {:else if view === 'settings'}
     <section class="panel fields">
-      <p class="label">Nomie API</p>
-      <label>API address<input bind:value={sync.settings.apiAddress} placeholder="Leave empty for the default" /></label>
-      <label>API key<input bind:value={sync.settings.apiKey} placeholder="The key from the Nomie API plugin" /></label>
-      <p class="label">Apple Watch API</p>
-      <label>AW API domain<input bind:value={sync.settings.awApiAddress} placeholder="Leave empty for the default" /></label>
-      <label>AW API key<input bind:value={sync.settings.awApiKey} placeholder="The key from the Apple Watch app" /></label>
-      <label class="switch"><span>Sync when Nomie starts</span><input type="checkbox" bind:checked={sync.settings.syncOnStart} /></label>
-      <button class="primary" onclick={saveSettings}>Save settings</button>
+      <p class="label">{t('apiHead')}</p>
+      <label>{t('apiAddress')}<input bind:value={sync.settings.apiAddress} placeholder={t('apiAddressPh')} /></label>
+      <label>{t('apiKey')}<input bind:value={sync.settings.apiKey} placeholder={t('apiKeyPh')} /></label>
+      <p class="label">{t('awHead')}</p>
+      <label>{t('awDomain')}<input bind:value={sync.settings.awApiAddress} placeholder={t('apiAddressPh')} /></label>
+      <label>{t('awKey')}<input bind:value={sync.settings.awApiKey} placeholder={t('awKeyPh')} /></label>
+      <label class="switch"><span>{t('syncOnStart')}</span><input type="checkbox" bind:checked={sync.settings.syncOnStart} /></label>
+      <button class="primary" onclick={saveSettings}>{t('saveSettings')}</button>
     </section>
   {:else}
     <section class="panel">
-      <p>Choose the trackables your Apple Watch app can log. Trackables from the last 10, 20 or 30 days can be added automatically. Blacklisted trackables are sent as switched off.</p>
-      <p class="muted">The Apple Watch app logs through the Nomie API plugin.</p>
+      <p>{t('infoP1')}</p>
+      <p class="muted">{t('infoP2')}</p>
     </section>
   {/if}
 </div>

@@ -65,7 +65,7 @@ export const refreshItem = (id: string, old: Entry, reply: { id: string; trackab
     return { id, name: p.displayName, username: reply.id, emoji: PERSON_EMOJI, displayName: p.displayName, tag: p.username, type: 'person', label: p.displayName, ...PERSON_BLANKS };
   }
   const t = reply.trackable.tracker;
-  return { id, name: t.label, username: reply.id, displayName: t.label, tag: t.tag, type: t.type, label: t.label, ...tracker(t) };
+  return { id, name: t.label, username: reply.id, displayName: t.label, tag: t.tag, type: t.type, ...tracker(t) };
 };
 
 // The tag Nomie is asked for: "#" for a tracker, "@" for a person, unless the tag already has one

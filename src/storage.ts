@@ -1,3 +1,4 @@
+import { t } from './i18n/index.svelte';
 // The settings and selections, under the same storage keys as v1, so an upgrade keeps them.
 import type { Connection } from './protocol';
 
@@ -29,10 +30,10 @@ export const readSettings = (get: (key: string) => unknown): Settings => ({
 });
 
 export const SELECTION_CHOICES = [
-  { value: 'none', text: 'None' },
-  { value: 'last10d', text: 'Last 10 Days' },
-  { value: 'last20d', text: 'Last 20 Days' },
-  { value: 'last30d', text: 'Last 30 Days' },
+  { value: 'none', get text() { return t('none'); } },
+  { value: 'last10d', get text() { return t('last10'); } },
+  { value: 'last20d', get text() { return t('last20'); } },
+  { value: 'last30d', get text() { return t('last30'); } },
 ] as const;
 
 // The number of days a discovery choice looks back, or 0 for none
