@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { sync, load, changeSelection, addTrackables, removeItem, saveSelection, saveAndSync, saveSettings, launchSync } from './sync.svelte';
   import { SELECTION_CHOICES } from './storage';
-  import { paletteFrom, type Palette } from './palette';
+  import { paletteFrom, glassFrom, type Palette, type Glass } from './palette';
   import { offerTracker } from './tracker-offer';
   import { onPrefsChange } from './prefs-live';
 
@@ -11,11 +11,13 @@
 
   let view = $state<'main' | 'settings' | 'info'>('main');
   let palette = $state<Palette>(paletteFrom(undefined));
+  let glass = $state<Glass>(glassFrom(undefined));
   let scale = $state(1);
 
   const applyNomieValues = (plugin: any) => {
     if (!plugin?.prefs) return;
     palette = paletteFrom(plugin.prefs);
+    glass = glassFrom(plugin.prefs);
     scale = plugin.prefs.fontScale || 1;
   };
 
@@ -49,7 +51,7 @@
 
 </script>
 
-<div class="card" style="--page: {palette.page}; --card: {palette.card}; --text: {palette.text}; --muted: {palette.textSecondary}; --line: {palette.separator}; --fill: {palette.fill}; --tint: {palette.tint}; --on-tint: {palette.onTint}; --tint-soft: {palette.tintSoft}; --good: {palette.good}; --scale: {scale};">
+<div class="card" style="--page: {palette.page}; --card: {palette.card}; --text: {palette.text}; --muted: {palette.textSecondary}; --line: {palette.separator}; --fill: {palette.fill}; --tint: {palette.tint}; --on-tint: {palette.onTint}; --tint-soft: {palette.tintSoft}; --good: {palette.good}; --glass-fill: {glass.fill}; --glass-edge: {glass.edge}; --glass-blur: {glass.blur}; --glass-shadow: {glass.shadow}; --scale: {scale};">
   <header class="top">
     <h1>⌚️ Apple Watch</h1>
     <nav class="tabs">
