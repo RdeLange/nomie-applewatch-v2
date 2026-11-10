@@ -137,7 +137,10 @@
 
 <style>
   .card { box-sizing: border-box; min-height: 100vh; padding: 16px; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; background: var(--page); color: var(--text); font-size: calc(16px * var(--scale)); line-height: 1.4; }
-  .top { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+  /* the plugin page fills the frame, so the glass bar sits at the top edge */
+  :global(body) { margin: 0; }
+  /* the header is a Liquid Glass bar (D-glass): the title and the tabs stay at the top, and the content scrolls under them */
+  .top { position: sticky; top: 0; z-index: 2; display: flex; flex-direction: column; gap: 10px; margin: -16px -16px 12px; padding: 16px 16px 10px; background: var(--glass-fill); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); border-bottom: 1px solid var(--glass-edge); }
   h1 { margin: 0; font-size: calc(26px * var(--scale)); font-weight: 700; }
   .tabs { display: flex; gap: 6px; }
   .tabs button, .segments button, .small { padding: 8px 12px; border: 0; border-radius: 10px; background: var(--fill); color: var(--text); font: inherit; cursor: pointer; }
